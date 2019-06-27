@@ -1,0 +1,105 @@
+%YAML:1.0
+---
+#Allaince
+#Nanjing University of Science & Technology
+
+key :                                                     2
+
+# Who am i
+# Blue : 0
+# Green  :1
+# Red :2
+#---------------------------------------------------------#
+Iam :                                                     2
+#---------------------------------------------------------#
+Youare :                                                  0
+#---------------------------------------------------------#
+
+# Threshold
+Threshold4Gray2Binary :                                   50
+Threshold4Gray2BinaryPowerTrigger :                       50
+
+#cv::imshow()
+isShowOriginImage :                                       0
+isShowOtherImage :                                        0
+isShowFinallyImage :                                      1
+
+#Serial
+SerialPath :                                              /dev/ttyUSB0
+isSerialOnline :                                          0
+isSerialDebug:                                            1
+isSerialDebugIndependently :                              0
+isShowSerialWriteDataIndependentThread :                  0
+isShowSerialReadDataIndependentThread :                   0
+
+isShowSerialWriteDataMainThread :                         0
+isShowSerialReadDataMainThread :                          0
+
+
+#Shoot video
+isEnableShooting :                                        0
+isSaveOriginal :                                          0
+isSaveResultVideo :                                       0
+
+#CameraORvideo
+# DesCription : -2 Video
+#               -1 Industial Camera
+#                0 Common Camera
+frameSource :                                             -1
+VideoPath :                                               ../others/video/11.avi
+CameraParameterPath :                                     ../others/parameters_lists/camera.xml
+VideoSavePath :                                           ../others/video/ # unused param
+
+#Calibration
+Calibration :                                             ../others/picture/Calibration
+CornersMatrix :                                           [ 19, 19 ]
+Rectangle:                                                [ 40, 40 ]
+
+
+#Armor  // cm
+NormalArmorWidth:                                         134
+NormalArmorHeight:                                        56
+LargerArmorWidth:                                         230
+LargerArmorHeight:                                        56
+
+#variable
+cvWaitKeyTime :                                           1
+resolution :                                              [ 640, 480 ] #cv::size
+shootingImageSize :                                       [ 640, 480 ]
+#Dyaw :                                                    1.3254
+Dyaw :                                                    4.5
+#PowerTigger
+PowerTriggerTemplateSzie :                                [ 60, 108 ]
+
+#Threshold 4 Armor
+theMaximumdifference42Leds :                              20
+theMaximumDistance42Leds :                                3.0
+theMinimumDistance42Leds :                                1.2
+
+theMinmumSize4aContours :                                 10
+supLengthOverWidth :                                      15
+infLengthOverWidth :                                      2
+#Blue 0.5// red 0.3
+blueColorPercentage :                                     0.5
+redColorPercentage :                                      0.3
+MinmumPossibility :                                       20
+isRecgArmorNum :                                          0
+
+#Number Recognition
+LinearGain :                                              10
+
+CameraMatrix: !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [1.7454893184740995e+03,   0.  ,3.2219946602489057e+02,
+          0.,  1.7431400456437320e+03,   2.3151213107291804e+02,
+          0.,  0.,  1.]
+DistCoeffs: !!opencv-matrix
+   rows: 1
+   cols: 14
+   dt: d
+   data: [ 1.3543316713315413e+01, -6.7860676373684443e+00,
+       1.2975097575773501e-02, -3.7188576800156292e-03, 0.,
+       1.4146075324092122e+01, 0., 2.5038119132035686e+01, 0., 0., 0.,
+       0., 0., 0. ]

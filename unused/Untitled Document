@@ -1,0 +1,47 @@
+/**
+ *
+ *
+ *
+ * */
+void RoboMaster2019::SentryBgr2GrayBuff() {
+    cv::Mat dst = Frame.clone();
+    // this is the hot point*****************************************************
+    cv::cvtColor(dst, dst, CV_BGR2GRAY);
+    cv::GaussianBlur(dst,dst,cv::Size(5,5),1,0);
+
+    // CV_BGR2Lab is waste more time than CV_BGR2GRAY
+    Gray = Gray > setter.Threshold4Gray2BinaryPowerTrigger;
+    cv::dilate(Gray,Gray,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3)));
+    cv::erode(Gray,Gray,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3)));
+
+    SHOW_IMAGE1;
+}
+
+
+
+/**
+ *
+ *
+ *
+ * */
+sint RoboMaster2019::BuffMode() {
+    while(this->mode_Con_Vid_Pic!=-1){
+        // Get a BGR Image(Original)
+        this->cap->read(Frame);
+        frameNum++;
+        cv::resize(this->Frame,this->Frame,this->setter.resolution);
+        SentryBgr2GrayBuff();
+        /*
+        BuffExpert();
+         */
+        /*
+        AutoCollimation();
+        */
+        /*
+        BuffExpert_ImageSub();
+        */
+        EndOneLoop();
+        KeyBoardCallBack();
+    }
+    return 222;
+}

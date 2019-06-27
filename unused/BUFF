@@ -1,0 +1,113 @@
+/**
+ * Description : Power Switcher
+ *
+ *
+ * */
+void RoboMaster2019::BuffExpert() {
+    cv::Mat powerCopy = Gray.clone();
+    //find all contours
+    cv::imshow("Power Tiger",powerCopy);
+    cv::findContours(powerCopy,AllContours, cv::RETR_CCOMP/*cv::RETR_EXTERNAL*/, cv::CHAIN_APPROX_NONE);
+    unsigned long int conSize0 = AllContours.size();
+    std::vector<cv::Moments> moments(conSize0);
+    std::vector<cv::RotatedRect> rects(conSize0);
+    std::vector<cv::RotatedRect> ellipse(conSize0);
+    analyze.AnalyzeTheMoment(AllContours);
+
+    if(conSize0>0){
+        for(int i = 0;i<conSize0;++i){
+            // Using Moment Tech to Judge direction and shape and .....
+            moments[i] = cv::moments(AllContours[i], false);
+            // Using RotateRect to Choose Target and per
+            rects[i] = cv::minAreaRect(AllContours[i]);
+
+            cv::Point2f tempPoint[4];
+            cv::Point2f tempPointEllipse[4];
+
+            //TODO:There is a class named HuMoment in Opencv lib.
+            double Mu2 = (moments[i].nu20-moments[i].nu02)*(moments[i].nu20-moments[i].nu02)+4*moments[i].nu11*moments[i].nu11;
+            double Mu1 = moments[i].nu02+moments[i].nu20;
+
+
+            if(abs(Mu1-0.5)<0.05){
+                ellipse[i] = cv::fitEllipse(AllContours[i]);
+                rects[i].points(tempPoint);
+                ellipse[i].points(tempPointEllipse);
+
+                cv::Point2f dir4ellipse((tempPointEllipse[0].x+tempPointEllipse[3].x)/2-(tempPointEllipse[1].x+tempPointEllipse[2].x)/2,
+                                        (tempPointEllipse[0].y+tempPointEllipse[3].y)/2-(tempPointEllipse[1].y+tempPointEllipse[2].y)/2);
+                cv::Point2f center = rects[i].center;
+                cv::Point2f mcenter(static_cast<float >(moments[i].m10/moments[i].m00),
+                        static_cast<float>(moments[i].m01/moments[i].m00));
+                cv::Point2f dir4Moment(mcenter.x-center.x,mcenter.y-center.y);
+
+                if(dir4ellipse.x*dir4Moment.x+dir4ellipse.y*dir4Moment.y < 0){
+                    dir4ellipse.x = -dir4ellipse.x;
+                    dir4ellipse.y = -dir4ellipse.y;
+                }
+
+                cv::arrowedLine(Frame,
+                        cv::Point(static_cast<int>(center.x-dir4ellipse.x),
+                                static_cast<int>(center.y-dir4ellipse.y)),
+                        cv::Point(static_cast<int>(center.x+dir4ellipse.x),
+                                static_cast<int>(center.y+dir4ellipse.y)),
+                        cv::Scalar::all(255),1);
+                cv::line(Frame,tempPoint[0],tempPoint[1],cv::Scalar(255,0,0),1);
+                cv::line(Frame,tempPoint[1],tempPoint[2],cv::Scalar(0,255,0),1);
+                cv::line(Frame,tempPoint[2],tempPoint[3],cv::Scalar(0,0,255),1);
+                cv::line(Frame,tempPoint[3],tempPoint[0],cv::Scalar(255,255,255),1);
+
+                cv::putText(Frame," Target! ",tempPoint[3],1,1,cv::Scalar(255,0,0),1);
+
+            }
+            //When Mu1  are  equal, Mu2 will be equal with high possibility?
+            if(abs(Mu1-0.4)<0.05 && /*moments[i].m00>3500*/ abs(Mu2-0.05)<0.05){
+                ellipse[i] = cv::fitEllipse(AllContours[i]);
+
+                rects[i].points(tempPoint);
+                ellipse[i].points(tempPointEllipse);
+                float width = sqrtf((tempPointEllipse[0].x-tempPointEllipse[3].x)*(tempPointEllipse[0].x-tempPointEllipse[3].x)
+                               +(tempPointEllipse[0].y-tempPointEllipse[3].y)*(tempPointEllipse[0].y-tempPointEllipse[3].y));
+                float length = sqrtf((tempPointEllipse[0].x-tempPointEllipse[1].x)*(tempPointEllipse[0].x-tempPointEllipse[1].x)
+                                +(tempPointEllipse[0].y-tempPointEllipse[1].y)*(tempPointEllipse[0].y-tempPointEllipse[1].y));
+                float ratio = length/width;
+
+                if(fabs(ratio-1.7f)<0.5f){
+                    cv::Point2f dir4ellipse((tempPointEllipse[0].x+tempPointEllipse[3].x)/2-(tempPointEllipse[1].x+tempPointEllipse[2].x)/2,
+                                            (tempPointEllipse[0].y+tempPointEllipse[3].y)/2-(tempPointEllipse[1].y+tempPointEllipse[2].y)/2);
+                    cv::Point2f center = rects[i].center;
+                    cv::Point2f mcenter(static_cast<float >(moments[i].m10/moments[i].m00),
+                                        static_cast<float>(moments[i].m01/moments[i].m00));
+                    cv::Point2f dir4Moment(mcenter.x-center.x,mcenter.y-center.y);
+
+                    if(dir4ellipse.x*dir4Moment.x+dir4ellipse.y*dir4Moment.y < 0){
+                        dir4ellipse.x = -dir4ellipse.x;
+                        dir4ellipse.y = -dir4ellipse.y;
+                    }
+                    /*
+                    cv::Point2f Target[4] = { cv::Point2f(width, 0), cv::Point2f(width, length), cv::Point2f(0, length), cv::Point2f(0, 0) };
+                    cv::Mat Persbective = PerspectiveTrans(Frame, tempPoint, Target);
+                    cv::Rect PowerTriggerROI(Target[3],Target[1]);
+                    cv::Mat Roi = Persbective(PowerTriggerROI).clone();
+                    cv::imshow("ROI",Roi);
+                    cv::imwrite(getTimePicture(),Roi);
+
+                    if(setter.isShowFinallyImage){
+                        cv::imshow("Perspective",Persbective);
+                    }
+                    */
+                    cv::arrowedLine(Frame,cv::Point(static_cast<int>(center.x-dir4ellipse.x),static_cast<int>(center.y-dir4ellipse.y)),
+                                    cv::Point(static_cast<int>(center.x+dir4ellipse.x),static_cast<int>(center.y+dir4ellipse.y)),
+                                    cv::Scalar::all(255),1);
+                    cv::line(Frame,tempPoint[0],tempPoint[1],cv::Scalar(255,0,0),2);
+                    cv::line(Frame,tempPoint[1],tempPoint[2],cv::Scalar(0,255,0),2);
+                    cv::line(Frame,tempPoint[2],tempPoint[3],cv::Scalar(0,0,255),2);
+                    cv::line(Frame,tempPoint[3],tempPoint[0],cv::Scalar(255,255,255),2);
+                    cv::putText(Frame,std::to_string(ratio),center,1,1,cv::Scalar(255,0,0),1);
+                    cv::putText(Frame," Finished! ",tempPoint[3],1,1,cv::Scalar(255,0,0),1);
+                }
+            }
+        }
+    }
+    cv::imshow("Buff",Frame);
+}

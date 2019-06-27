@@ -1,0 +1,483 @@
+/**
+ * Create 4 MaGe & XiaoXiongmao
+ *
+ *
+ * */
+sint RoboMaster2019::ManuallySerialDebug() {
+
+    unsigned char p1 = 128-70;
+    unsigned char p2 = 128+70;
+    unsigned char y1 = 128-70;
+    unsigned char y2 = 128+70;
+
+    Frame = cv::Mat::zeros(setter.resolution,CV_8UC3);
+    cv::putText(Frame,"Serial Mode",cv::Point(80,setter.resolution.height/2),1,5,cv::Scalar(0,0,255),3);//1567
+    cv::imshow("1",Frame);
+    while(RUN){
+
+        int command = cv::waitKey(0);
+        bug(command);
+        switch (command){
+            case 'w':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,p1,128,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+            case 's':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,p2,128,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+            case 'a':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,128,y1,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+            case 'd':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,128,y2,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+            case 'e':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,p1,y2,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+            case 'c':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,p2,y2,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+            case 'q':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,p1,y1,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+            case 'z':
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,p2,y1,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+            case 't':
+                GraduallySend(128,128+50);
+                break;
+            case 'r':
+                GraduallySend(128,128-50);
+                break;
+            default:
+                //Default Send Zero Condition!
+                if(setter.isSerialDebug){
+                    unsigned char data[4] = {0xff,128,128,0xfe};
+                    for(unsigned char ele:data){
+                        serial->writeBuffer(&ele,1);
+                    }
+                }
+                break;
+        }
+        if(command==27){
+            break;
+        }
+    }
+    return 0;
+}
+
+
+
+if(setter.isRecgArmorNum){
+            float angle = 0.0;
+            cv::Size si = Armors[maxPossibility_index].ArmorRotatedRect.size;
+
+            if (Armors[maxPossibility_index].ArmorRotatedRect.size.width <= Armors[maxPossibility_index].ArmorRotatedRect.size.height){
+                angle = Armors[maxPossibility_index].ArmorRotatedRect.angle + 90;
+                int tm = si.width;
+                si.width = si.height;
+                si.height = tm;
+                //swap(si.width, si.height);
+            }else{
+                angle = Armors[maxPossibility_index].ArmorRotatedRect.angle;
+            }
+            cv::Mat deal_img;
+            cv::Rect Area2AffineTemp=Armors[maxPossibility_index].ArmorRotatedRect.boundingRect();
+            cv::Rect Area2AffineTemp2(cv::Point(Area2AffineTemp.tl().x-Area2AffineTemp.width/2,Area2AffineTemp.tl().y-Area2AffineTemp.height/2),
+                                      cv::Point(Area2AffineTemp.br().x+Area2AffineTemp.width/2,Area2AffineTemp.br().y+Area2AffineTemp.height/2));
+            cv::Rect World(cv::Point(0,0),cv::Point(640,480));
+
+            cv::Rect Area2Affine = World & Area2AffineTemp2;
+
+            cv::Mat src_img = GrayEnhancement(Area2Affine).clone();
+            cv::Point2f relatedPosition (Armors[maxPossibility_index].ArmorRotatedRect.center.x-Armors[maxPossibility_index].ArmorRotatedRect.boundingRect().tl().x,
+                                         Armors[maxPossibility_index].ArmorRotatedRect.center.y-Armors[maxPossibility_index].ArmorRotatedRect.boundingRect().tl().y);
+
+            if(false){
+                cv::warpAffine(
+                        GrayEnhancement,
+                        deal_img,
+                        cv::getRotationMatrix2D(Armors[maxPossibility_index].ArmorRotatedRect.center, angle,1),
+                        Frame.size(),
+                        CV_INTER_CUBIC);
+            }else{
+                cv::warpAffine(
+                        src_img,
+                        deal_img,
+                        cv::getRotationMatrix2D(relatedPosition, angle,1),
+                        src_img.size(),
+                        CV_INTER_CUBIC);
+            }
+
+
+            cv::imshow("src_img", deal_img);
+            cv::Mat rRect;
+            si.height = si.height*2;
+            si.width = si.width/(1.5);
+            getRectSubPix(deal_img, si, cv::Point(Armors[maxPossibility_index].ArmorCenter.x-Area2Affine.tl().x,
+                                                  Armors[maxPossibility_index].ArmorCenter.y-Area2Affine.tl().y), rRect);
+            cv::GaussianBlur(rRect,rRect,cv::Size(7,7),5,5);
+
+            rRect = rRect>120;
+            /*
+            cv::erode(rRect,rRect,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(5,5)));
+            cv::dilate(rRect,rRect,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(5,5)));
+            cv::Canny(rRect,rRect,10,20);
+             */
+
+            cv::resize(rRect,rRect,cv::Size(10,14));
+            imshow("OK", rRect);
+            //bug2("Num",Recg.RecgnizeByImageSub(rRect));
+        }
+
+
+
+
+/**
+ * Description : Power Switcher
+ *
+ *
+ * */
+void RoboMaster2019::BuffExpert() {
+    cv::Mat powerCopy = Gray.clone();
+    //find all contours
+    cv::imshow("Power Tiger",powerCopy);
+    cv::findContours(powerCopy,AllContours, cv::RETR_CCOMP/*cv::RETR_EXTERNAL*/, cv::CHAIN_APPROX_NONE);
+    unsigned long int conSize0 = AllContours.size();
+    std::vector<cv::Moments> moments(conSize0);
+    std::vector<cv::RotatedRect> rects(conSize0);
+    std::vector<cv::RotatedRect> ellipse(conSize0);
+    analyze.AnalyzeTheMoment(AllContours);
+
+    if(conSize0>0){
+        for(int i = 0;i<conSize0;++i){
+            // Using Moment Tech to Judge direction and shape and .....
+            moments[i] = cv::moments(AllContours[i], false);
+            // Using RotateRect to Choose Target and per
+            rects[i] = cv::minAreaRect(AllContours[i]);
+
+            cv::Point2f tempPoint[4];
+            cv::Point2f tempPointEllipse[4];
+
+            //TODO:There is a class named HuMoment in Opencv lib.
+            double Mu2 = (moments[i].nu20-moments[i].nu02)*(moments[i].nu20-moments[i].nu02)+4*moments[i].nu11*moments[i].nu11;
+            double Mu1 = moments[i].nu02+moments[i].nu20;
+
+
+            if(abs(Mu1-0.5)<0.05){
+                ellipse[i] = cv::fitEllipse(AllContours[i]);
+                rects[i].points(tempPoint);
+                ellipse[i].points(tempPointEllipse);
+
+                cv::Point2f dir4ellipse((tempPointEllipse[0].x+tempPointEllipse[3].x)/2-(tempPointEllipse[1].x+tempPointEllipse[2].x)/2,
+                                        (tempPointEllipse[0].y+tempPointEllipse[3].y)/2-(tempPointEllipse[1].y+tempPointEllipse[2].y)/2);
+                cv::Point2f center = rects[i].center;
+                cv::Point2f mcenter(static_cast<float >(moments[i].m10/moments[i].m00),
+                        static_cast<float>(moments[i].m01/moments[i].m00));
+                cv::Point2f dir4Moment(mcenter.x-center.x,mcenter.y-center.y);
+
+                if(dir4ellipse.x*dir4Moment.x+dir4ellipse.y*dir4Moment.y < 0){
+                    dir4ellipse.x = -dir4ellipse.x;
+                    dir4ellipse.y = -dir4ellipse.y;
+                }
+
+                cv::arrowedLine(Frame,
+                        cv::Point(static_cast<int>(center.x-dir4ellipse.x),
+                                static_cast<int>(center.y-dir4ellipse.y)),
+                        cv::Point(static_cast<int>(center.x+dir4ellipse.x),
+                                static_cast<int>(center.y+dir4ellipse.y)),
+                        cv::Scalar::all(255),1);
+                cv::line(Frame,tempPoint[0],tempPoint[1],cv::Scalar(255,0,0),1);
+                cv::line(Frame,tempPoint[1],tempPoint[2],cv::Scalar(0,255,0),1);
+                cv::line(Frame,tempPoint[2],tempPoint[3],cv::Scalar(0,0,255),1);
+                cv::line(Frame,tempPoint[3],tempPoint[0],cv::Scalar(255,255,255),1);
+
+                cv::putText(Frame," Target! ",tempPoint[3],1,1,cv::Scalar(255,0,0),1);
+
+            }
+            //When Mu1  are  equal, Mu2 will be equal with high possibility?
+            if(abs(Mu1-0.4)<0.05 && /*moments[i].m00>3500*/ abs(Mu2-0.05)<0.05){
+                ellipse[i] = cv::fitEllipse(AllContours[i]);
+
+                rects[i].points(tempPoint);
+                ellipse[i].points(tempPointEllipse);
+                float width = sqrtf((tempPointEllipse[0].x-tempPointEllipse[3].x)*(tempPointEllipse[0].x-tempPointEllipse[3].x)
+                               +(tempPointEllipse[0].y-tempPointEllipse[3].y)*(tempPointEllipse[0].y-tempPointEllipse[3].y));
+                float length = sqrtf((tempPointEllipse[0].x-tempPointEllipse[1].x)*(tempPointEllipse[0].x-tempPointEllipse[1].x)
+                                +(tempPointEllipse[0].y-tempPointEllipse[1].y)*(tempPointEllipse[0].y-tempPointEllipse[1].y));
+                float ratio = length/width;
+
+                if(fabs(ratio-1.7f)<0.5f){
+                    cv::Point2f dir4ellipse((tempPointEllipse[0].x+tempPointEllipse[3].x)/2-(tempPointEllipse[1].x+tempPointEllipse[2].x)/2,
+                                            (tempPointEllipse[0].y+tempPointEllipse[3].y)/2-(tempPointEllipse[1].y+tempPointEllipse[2].y)/2);
+                    cv::Point2f center = rects[i].center;
+                    cv::Point2f mcenter(static_cast<float >(moments[i].m10/moments[i].m00),
+                                        static_cast<float>(moments[i].m01/moments[i].m00));
+                    cv::Point2f dir4Moment(mcenter.x-center.x,mcenter.y-center.y);
+
+                    if(dir4ellipse.x*dir4Moment.x+dir4ellipse.y*dir4Moment.y < 0){
+                        dir4ellipse.x = -dir4ellipse.x;
+                        dir4ellipse.y = -dir4ellipse.y;
+                    }
+                    /*
+                    cv::Point2f Target[4] = { cv::Point2f(width, 0), cv::Point2f(width, length), cv::Point2f(0, length), cv::Point2f(0, 0) };
+                    cv::Mat Persbective = PerspectiveTrans(Frame, tempPoint, Target);
+                    cv::Rect PowerTriggerROI(Target[3],Target[1]);
+                    cv::Mat Roi = Persbective(PowerTriggerROI).clone();
+                    cv::imshow("ROI",Roi);
+                    cv::imwrite(getTimePicture(),Roi);
+
+                    if(setter.isShowFinallyImage){
+                        cv::imshow("Perspective",Persbective);
+                    }
+                    */
+                    cv::arrowedLine(Frame,cv::Point(static_cast<int>(center.x-dir4ellipse.x),static_cast<int>(center.y-dir4ellipse.y)),
+                                    cv::Point(static_cast<int>(center.x+dir4ellipse.x),static_cast<int>(center.y+dir4ellipse.y)),
+                                    cv::Scalar::all(255),1);
+                    cv::line(Frame,tempPoint[0],tempPoint[1],cv::Scalar(255,0,0),2);
+                    cv::line(Frame,tempPoint[1],tempPoint[2],cv::Scalar(0,255,0),2);
+                    cv::line(Frame,tempPoint[2],tempPoint[3],cv::Scalar(0,0,255),2);
+                    cv::line(Frame,tempPoint[3],tempPoint[0],cv::Scalar(255,255,255),2);
+                    cv::putText(Frame,std::to_string(ratio),center,1,1,cv::Scalar(255,0,0),1);
+                    cv::putText(Frame," Finished! ",tempPoint[3],1,1,cv::Scalar(255,0,0),1);
+                }
+            }
+        }
+    }
+    cv::imshow("Buff",Frame);
+}
+
+
+
+void ArmorFind::FindFromContours(cv::Mat &Frame,
+                                 std::vector<std::vector<cv::Point>> AllContours,
+                                 std::vector<Armor> &Armors,
+                                 Setter setter) {
+    //PickCorrectContoursAndLedBar
+    int allContoursSize = static_cast<int>(AllContours.size());
+    for(int i = 0;i<allContoursSize;++i){
+        cv::drawContours(*DrawingBoard_1,AllContours,i,W,1);
+        int currentContourSize = static_cast<int>(AllContours[i].size());
+        //find minAreaRect of each contours
+        if(currentContourSize>=setter.theMinmumSize4aContours){
+            //cv::RotatedRect rect = cv::fitEllipse(AllContours[i]);
+            cv::RotatedRect rect = cv::minAreaRect(AllContours[i]);
+            float a,b,a_b;
+            // Find2End4RotatedRect
+            //four points of each Rect
+            cv::Point2f RoRePoints[4];
+            rect.points(RoRePoints);
+
+            //calc Rect's a and b length.
+            //length of p0 p1 is a
+
+            a = sqrtf((RoRePoints[0].x-RoRePoints[1].x)*(RoRePoints[0].x-RoRePoints[1].x)+(RoRePoints[0].y-RoRePoints[1].y)*(RoRePoints[0].y-RoRePoints[1].y));
+            //length of p0 p3 is b
+            b = sqrtf((RoRePoints[1].x-RoRePoints[2].x)*(RoRePoints[1].x-RoRePoints[2].x)+(RoRePoints[1].y-RoRePoints[2].y)*(RoRePoints[1].y-RoRePoints[2].y));
+            if(a>b){
+                a_b = a/b;
+            }else{
+                a_b = b/a;
+            }
+
+            //range and area
+            if(a_b>setter.infLengthOverWidth  && a_b <setter.supLengthOverWidth){
+                sint blue = 0;
+                sint red = 0;
+                for(int j = 0;j<currentContourSize;++j){
+                    const uchar* inData=Frame.ptr<uchar>(AllContours[i][j].y);
+                    if(*inData+AllContours[i][j].x*3+0>*inData+AllContours[i][j].x*3+2){
+                        ++blue;
+                    }else{
+                        ++red;
+                    }
+                }
+
+                //Red or blue ?
+                if((blue>currentContourSize*setter.blueColorPercentage && setter.Youare == 0) ||   // Opponent is Blue
+
+                   (red>currentContourSize*setter.redColorPercentage && setter.Youare == 2) ||  // Opponent is Blue
+
+                   ((blue>currentContourSize*setter.blueColorPercentage ||
+                     red<currentContourSize*setter.redColorPercentage)
+                    && setter.Iam == 1)){ // I can hurt My Teammates
+
+                    LedBar temp(rect);
+                    LedGroup.push_back(temp);
+                    temp.DrawLed(*DrawingBoard_1);
+
+                }else{
+                    cv::Point2f Coners[4];
+                    rect.points(Coners);
+                    cv::putText(*DrawingBoard_1,"Color",Coners[2],1,1,cv::Scalar(0,0,255));
+
+                    /*
+                    cv::line(DrawingBoard_1,Coners[0],Coners[1],cv::Scalar(255,0,0),1);
+                    cv::line(DrawingBoard_1,Coners[1],Coners[2],cv::Scalar(0,255,0),1);
+                    cv::line(DrawingBoard_1,Coners[2],Coners[3],cv::Scalar(0,0,255),1);
+                    cv::line(DrawingBoard_1,Coners[3],Coners[0],cv::Scalar(255,255,255),1);
+                     */
+                }
+            }else{
+                cv::Point2f Coners[4];
+                rect.points(Coners);
+                cv::putText(*DrawingBoard_1,std::string("W_H")+std::to_string(a_b),Coners[2],1,1,cv::Scalar(0,0,255));
+                /*
+                cv::line(DrawingBoard_1,Coners[0],Coners[1],cv::Scalar(255,0,0),1);
+                cv::line(DrawingBoard_1,Coners[1],Coners[2],cv::Scalar(0,255,0),1);
+                cv::line(DrawingBoard_1,Coners[2],Coners[3],cv::Scalar(0,0,255),1);
+                cv::line(DrawingBoard_1,Coners[3],Coners[0],cv::Scalar(255,255,255),1);
+                cv::ellipse(DrawingBoard_1,rect,cv::Scalar(255,255,255),1);
+                 */
+
+            }
+        }else{
+            cv::putText(*DrawingBoard_1,std::to_string(AllContours[i].size()),AllContours[i][0],1,1,cv::Scalar(0,0,255));
+        }
+    }
+
+    //CorrectContoursAndLedbar to Armor
+    //LedBar2Armor
+    int ledsSzie = static_cast<int>(LedGroup.size());
+    for(int i = 0;i<ledsSzie;++i){
+        for(int j = i+1;j<ledsSzie;++j){
+
+            // ArmorLeds almost have the same length
+            if(LedGroup[i].checkParallel(LedGroup[j])>98){                     // Degree of Parallel
+                if(LedGroup[i].checkEqualSize(LedGroup[j])<20) {                   // Have the same length
+                    if (LedGroup[i].checkRectangle(LedGroup[j]) < 8) {                // Rectangle
+                        if (LedGroup[i].checkProportion(LedGroup[j], 2.03) < 1 || 0) {    // width : height
+                            if (LedGroup[i].checkArea(LedGroup[j]) > 100) {           // Area
+                                float possibilitytemp = -LedGroup[i].checkRectangle(LedGroup[j]);
+                                Armor tempArmor(LedGroup[i], LedGroup[j], possibilitytemp);
+                                Armors.push_back(tempArmor);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+//                if(FinallyTraget[TargetSize-1].x-FinallyTraget[TargetSize-2].x>50){
+//                    Predict.x = (Predict.x-320)*0.1+320;
+//                }else if(FinallyTraget[TargetSize-1].x-FinallyTraget[TargetSize-2].x>20 && FinallyTraget[TargetSize-1].x-FinallyTraget[TargetSize-2].x<=50){
+//                    Predict.x = (Predict.x-320)*0.3+320;
+//                }else if(FinallyTraget[TargetSize-1].x-FinallyTraget[TargetSize-2].x>10 && FinallyTraget[TargetSize-1].x-FinallyTraget[TargetSize-2].x<=20){
+//                    Predict.x = (Predict.x-320)*0.5+320;
+//                }
+
+
+
+    if(key == 1){
+        // 2 Load the Template TargetPowerTigger & FinishedPowerTrigger
+        PowerTriggerTemplateTarget = cv::imread("../others/picture/PowerTriggerTarget.png",CV_LOAD_IMAGE_GRAYSCALE);
+        PowerTriggerTemplateTarget = PowerTriggerTemplateTarget >50;
+        cv::resize(PowerTriggerTemplateTarget,PowerTriggerTemplateTarget,setter.PowerTriggerTemplateSzie);
+        cv::dilate(PowerTriggerTemplateTarget,PowerTriggerTemplateTarget,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(5,5)));
+        cv::erode(PowerTriggerTemplateTarget,PowerTriggerTemplateTarget,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(5,5)));
+        cv::imshow("PowerTriggerTemplateTarget",PowerTriggerTemplateTarget);
+
+        PowerTriggerTemplateFinished = cv::imread("../others/picture/PowerTriggerFinished.png",CV_LOAD_IMAGE_GRAYSCALE);
+        PowerTriggerTemplateFinished = PowerTriggerTemplateFinished >50;
+        cv::resize(PowerTriggerTemplateFinished,PowerTriggerTemplateFinished,setter.PowerTriggerTemplateSzie);
+        cv::dilate(PowerTriggerTemplateFinished,PowerTriggerTemplateFinished,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(5,5)));
+        cv::erode(PowerTriggerTemplateFinished,PowerTriggerTemplateFinished,cv::getStructuringElement(cv::MORPH_RECT,cv::Size(5,5)));
+        cv::imshow("PowerTriggerTemplateFinished",PowerTriggerTemplateFinished);
+    }
+
+
+void ArmorFind::FindFromContoursM(cv::Mat &Frame,
+                                 std::vector<std::vector<cv::Point>> AllContours,
+                                 std::vector<Armor> &Armors,
+                                 Setter setter) {
+    FindLed(Frame,AllContours,setter);
+    //CorrectContoursAndLedbar to Armor
+    //LedBar2Armor
+    int ledsSzie = static_cast<int>(LedGroup.size());
+    for(int i = 0;i<ledsSzie;++i){
+        for(int j = i+1;j<ledsSzie;++j){
+            if(LedGroup[i].DistanceWith(LedGroup[j])/(LedGroup[i].length+LedGroup[j].length) < 2.0f &&
+                    LedGroup[i].DistanceWith(LedGroup[j])/(LedGroup[i].length+LedGroup[j].length) >1.0f ){
+                cv::Point2f points[4];
+                cv::Point2f pointss[4];
+                LedBar::AdjustPointOrder(LedGroup[i],LedGroup[j],points);
+                pointss[0] = cv::Point(0,0);
+                pointss[1] = points[1]-points[0];
+                pointss[2] = points[2]-points[0];
+                pointss[3] = points[3]-points[0];
+
+                float PImage[3][3] = {pointss[1].x, pointss[2].x,pointss[3].x,
+                                      pointss[1].y, pointss[2].y,pointss[3].y,
+                                      1,1,1};
+
+                float PArmor[3][3] = {129,  129,  0,
+                                      0,    56,   56,
+                                      1,    1,    1};
+
+                cv::Mat PImageMatrix = cv::Mat(3,3,CV_32FC1,PImage);
+                cv::Mat PArmorMatrix = cv::Mat(3,3,CV_32FC1,PArmor);
+                if(cv::determinant(PImageMatrix)>0){
+
+                    cv::Mat res = PImageMatrix*PArmorMatrix.inv();
+                    cv::Mat KS = res(cv::Range(0,2),cv::Range(0,2)).clone();
+                    cv::Mat Tt = res(cv::Range(0,2),cv::Range(2,3)).clone();
+
+                    cv::Mat T = KS.inv()*Tt;
+
+//                    bug2("Tt",Tt.size());
+//                    bug2("res",res);
+//                    bug2("KS",KS);
+//                    bug2("T",T);
+//                    bug2("Tt",Tt);
+
+                    float tx = res.at<float>(0,2);
+                    float ty = res.at<float>(1,2);
+                    if(fabs(tx)<20 && fabs(ty) < 20){
+                        Armor tempArmor(points,-sqrtf(tx*tx+ty*ty));
+                        Armors.push_back(tempArmor);
+                    }
+
+                }
+            }
+        }
+    }
+}

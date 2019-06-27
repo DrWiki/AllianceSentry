@@ -1,0 +1,8 @@
+##ignore this file##
+/cmake-build-debug/
+/cmakebuild4qt/
+/build/
+
+/others/video/
+/others/data/
+/.idea/
