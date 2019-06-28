@@ -21,7 +21,7 @@ typora-root-url: readme_src
   算法框图: 
   
 
-![Armorfind](./readme_src/Armorfind.png)
+![Armorfind](/readme_src/Armorfind.png)
 =======
 - 基本原理：向量几何，矩阵的线性变换
 >>>>>>> 14373c856db866183e69e7938bf1a2ec196aa839
@@ -32,7 +32,7 @@ typora-root-url: readme_src
 - 基本原理：在装甲板识别正确的基础上，透视变换，SVM，CNN
   算法框图：
 
-![装甲板数字识别](./readme_src/装甲板数字识别.png)
+![装甲板数字识别](/readme_src/装甲板数字识别.png)
 
 
 ### 功能三：大能量机关识别
@@ -43,7 +43,7 @@ typora-root-url: readme_src
 - 相关类：ArmorFind 、Armor、LEDbar 
 - 基本原理：状态坐标变换，卡尔曼滤波
 算法框图：
-- ![位置预测](./readme_src/位置预测.png)
+- ![位置预测](/readme_src/位置预测.png)
 
 ### 功能五：弹道建模解算
 - 相关类：ArmorFind 、Armor、LEDbar 
