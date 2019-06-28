@@ -11,7 +11,7 @@ typora-root-url: readme_src
 - [Robomaster机甲大师赛赛事介绍](https://www.robomaster.com/zh-CN/robo/overview/ "赛事介绍")
 ### 功能O：图像处理
 - 流程：
-![图像处理](./readme_src/图像处理.png)
+![图像处理](/readme_src/图像处理.png)
 ### 功能一：装甲板识别
 
 - 相关类：ArmorFind 、Armor、LEDbar 
