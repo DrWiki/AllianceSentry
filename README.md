@@ -1,5 +1,5 @@
 ---
-typora-root-url: readme_src
+typora-root-url: ./
 ---
 
 # 全自动自主瞄准射击机器人视觉系统
@@ -18,6 +18,7 @@ typora-root-url: readme_src
 - 基本原理：向量几何，矩阵的线性变换
 - 算法框图: 
   
+
 ![Armorfind](/readme_src/Armorfind.png)
 ### 功能二：装甲数字识别
 - 相关类：ArmorFind 、Armor、LEDbar 
