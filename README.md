@@ -11,26 +11,20 @@ typora-root-url: readme_src
 - [Robomaster机甲大师赛赛事介绍](https://www.robomaster.com/zh-CN/robo/overview/ "赛事介绍")
 ### 功能O：图像处理
 - 流程：
-![图像处理](/readme_src/图像处理.png)
+- ![图像处理](/readme_src/图像处理.png)
 ### 功能一：装甲板识别
 
 - 相关类：ArmorFind 、Armor、LEDbar 
-- 基本原理：向量几何，坐标变换
-  算法框图: 
-  
-
-![Armorfind](/readme_src/Armorfind.png)
-
 - 基本原理：向量几何，矩阵的线性变换
-
+- 算法框图: 
+  
+![Armorfind](/readme_src/Armorfind.png)
 ### 功能二：装甲数字识别
 - 相关类：ArmorFind 、Armor、LEDbar 
-
 - 基本原理：在装甲板识别正确的基础上，透视变换，SVM，CNN
   算法框图：
 
-![装甲板数字识别](/readme_src/装甲板数字识别.png)
-
+- ![装甲板数字识别](/readme_src/装甲板数字识别.png)
 
 ### 功能三：大能量机关识别
 - 相关类：ArmorFind 、Armor、LEDbar 
