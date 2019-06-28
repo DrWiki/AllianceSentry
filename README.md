@@ -15,16 +15,13 @@ typora-root-url: readme_src
 ### 功能一：装甲板识别
 
 - 相关类：ArmorFind 、Armor、LEDbar 
-
-<<<<<<< HEAD
 - 基本原理：向量几何，坐标变换
   算法框图: 
   
 
 ![Armorfind](/readme_src/Armorfind.png)
-=======
+
 - 基本原理：向量几何，矩阵的线性变换
->>>>>>> 14373c856db866183e69e7938bf1a2ec196aa839
 
 ### 功能二：装甲数字识别
 - 相关类：ArmorFind 、Armor、LEDbar 
