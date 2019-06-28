@@ -1,23 +1,49 @@
-#Video Content
+# 全自动自主瞄准射击机器人视觉系统
 
-- Description: these are all the video files and their own Introduction in this directory
-  
-- Here is the form
+- 此工程为Robomaster比赛中哨兵机器人的视觉系统的上位机软件部分，包含地方装甲识别、装甲板数字识别、大能量机关识别、运动目标预测、弹道建模解算、最佳击打位置解算等主要功能。
+
+- 另外有相机标定、CV示波器、轮廓分析、代码计时、参数读取以及防止意外掉线等辅助功能
+
+- [Robomaster机甲大师赛官网](https://www.robomaster.com/zh-CN	"机甲大师官方网站")
+
+- [Robomaster机甲大师赛赛事介绍](https://www.robomaster.com/zh-CN/robo/overview/ "赛事介绍")
+
+### 功能一：装甲板识别
+
+- 相关类：ArmorFind 、Armor、LEDbar 
+
+- 基本原理：向量几何，坐标变换
+
+### 功能二：装甲数字识别
+- 相关类：ArmorFind 、Armor、LEDbar 
+- 基本原理：在装甲板识别正确的基础上，透视变换，SVM，CNN
 
 
-| File_Name | Description | Date | other |
-| :-----: | :------ | :------:| --------|
-| 1.mp4 | Made by Sen Qiujie, No Rotate and Move | long ago |
-| 2.avi | Armor video|
-| 3.avi | Armor video|
-| 4.avi | Armor video|
-| 4.avi | Armor video|
-| 5.avi | Buff video |
-| 6.avi | Buff video |
-| 7.avi | Armor video|
-| 8.avi | Buff video | 2019/01/31 |
-| 9.avi | Buff video | 2019/01/31 |
-| 10.avi | Armor video|2019/02/20| Armor Best One
+### 功能三：大能量机关识别
+- 相关类：ArmorFind 、Armor、LEDbar 
+- 基本原理：多方法融合，1. 轮廓分析，2. 矩分析，3. K阶邻域，4. 欧拉距离&余弦距离
 
-[baidu](www.baidu.com)
 
+### 功能四：运动目标检测
+- 相关类：ArmorFind 、Armor、LEDbar 
+- 基本原理：状态坐标变换，卡尔曼滤波
+
+### 功能五：弹道建模解算
+- 相关类：ArmorFind 、Armor、LEDbar 
+- 基本原理：坐标系变换法，平面建模法
+
+
+### 功能六：最佳击打位置解算
+- 相关类：ArmorFind 、Armor、LEDbar 
+- 基本原理：PnP空间姿态位置解算，解析几何
+
+### 辅助功能一览
+
+辅助功能|作用|描述
+:-:|:--:|:--:
+相机标定|使用张友正标定法进行标定|
+CV示波器|观察各个变量或者参数的变化趋势，范围，情况，傅里叶分析（TODO：）等等|
+轮廓分析|识别轮廓，从属关系，标注矩，BoundingBox，椭圆拟合，主方向分析等|
+代码计时|计算代码运行时间，查找代码热点，计算识别时间，计算处理频率|
+参数读取|读取全部必要参数，路径，文件名等|
+防止意外掉线|防止串口/相机因机器人震动等，意外掉线|
