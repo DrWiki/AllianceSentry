@@ -1,37 +1,49 @@
+---
+typora-root-url: readme_src
+---
+
 # 全自动自主瞄准射击机器人视觉系统
 
 - 此工程为Robomaster比赛中哨兵机器人的视觉系统的上位机软件部分，包含地方装甲识别、装甲板数字识别、大能量机关识别、运动目标预测、弹道建模解算、最佳击打位置解算等主要功能。
-
 - 另外有相机标定、CV示波器、轮廓分析、代码计时、参数读取以及防止意外掉线等辅助功能
-
 - [Robomaster机甲大师赛官网](https://www.robomaster.com/zh-CN	"机甲大师官方网站")
 
 - [Robomaster机甲大师赛赛事介绍](https://www.robomaster.com/zh-CN/robo/overview/ "赛事介绍")
-
+### 功能O：图像处理
+- 流程：
+![图像处理](/图像处理.png)
 ### 功能一：装甲板识别
 
 - 相关类：ArmorFind 、Armor、LEDbar 
 
-- 基本原理：向量几何，矩阵的线性变换
+- 基本原理：向量几何，坐标变换
+  算法框图: 
+  
+
+![Armorfind](/Armorfind.png)
 
 ### 功能二：装甲数字识别
 - 相关类：ArmorFind 、Armor、LEDbar 
+
 - 基本原理：在装甲板识别正确的基础上，透视变换，SVM，CNN
+  算法框图：
+
+![装甲板数字识别](/装甲板数字识别.png)
 
 
 ### 功能三：大能量机关识别
 - 相关类：ArmorFind 、Armor、LEDbar 
 - 基本原理：多方法融合，1. 轮廓分析，2. 矩分析，3. K阶邻域，4. 欧拉距离&余弦距离
 
-
 ### 功能四：运动目标检测
 - 相关类：ArmorFind 、Armor、LEDbar 
 - 基本原理：状态坐标变换，卡尔曼滤波
+算法框图：
+- ![位置预测](/位置预测.png)
 
 ### 功能五：弹道建模解算
 - 相关类：ArmorFind 、Armor、LEDbar 
 - 基本原理：坐标系变换法，平面建模法
-
 
 ### 功能六：最佳击打位置解算
 - 相关类：ArmorFind 、Armor、LEDbar 
