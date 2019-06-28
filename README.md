@@ -1,5 +1,5 @@
 ---
-typora-root-url: readme_src
+typora-root-url: ./
 ---
 
 # 全自动自主瞄准射击机器人视觉系统
@@ -11,25 +11,21 @@ typora-root-url: readme_src
 - [Robomaster机甲大师赛赛事介绍](https://www.robomaster.com/zh-CN/robo/overview/ "赛事介绍")
 ### 功能O：图像处理
 - 流程：
-![图像处理](/图像处理.png)
+- ![图像处理](/readme_src/图像处理.png)
 ### 功能一：装甲板识别
 
 - 相关类：ArmorFind 、Armor、LEDbar 
-
-- 基本原理：向量几何，坐标变换
-  算法框图: 
+- 基本原理：向量几何，矩阵的线性变换
+- 算法框图: 
   
 
-![Armorfind](/Armorfind.png)
-
+![Armorfind](/readme_src/Armorfind.png)
 ### 功能二：装甲数字识别
 - 相关类：ArmorFind 、Armor、LEDbar 
-
 - 基本原理：在装甲板识别正确的基础上，透视变换，SVM，CNN
   算法框图：
 
-![装甲板数字识别](/装甲板数字识别.png)
-
+- ![装甲板数字识别](/readme_src/装甲板数字识别.png)
 
 ### 功能三：大能量机关识别
 - 相关类：ArmorFind 、Armor、LEDbar 
@@ -39,7 +35,7 @@ typora-root-url: readme_src
 - 相关类：ArmorFind 、Armor、LEDbar 
 - 基本原理：状态坐标变换，卡尔曼滤波
 算法框图：
-- ![位置预测](/位置预测.png)
+- ![位置预测](/readme_src/位置预测.png)
 
 ### 功能五：弹道建模解算
 - 相关类：ArmorFind 、Armor、LEDbar 
@@ -59,3 +55,4 @@ CV示波器|观察各个变量或者参数的变化趋势，范围，情况，�
 代码计时|计算代码运行时间，查找代码热点，计算识别时间，计算处理频率|
 参数读取|读取全部必要参数，路径，文件名等|
 防止意外掉线|防止串口/相机因机器人震动等，意外掉线|
+
