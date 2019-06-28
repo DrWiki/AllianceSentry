@@ -12,7 +12,7 @@
 
 - 相关类：ArmorFind 、Armor、LEDbar 
 
-- 基本原理：向量几何，坐标变换
+- 基本原理：向量几何，矩阵的线性变换
 
 ### 功能二：装甲数字识别
 - 相关类：ArmorFind 、Armor、LEDbar 
